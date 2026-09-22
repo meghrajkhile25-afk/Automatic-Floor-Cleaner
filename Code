@@ -1,0 +1,142 @@
+char data;
+
+// Motor A
+int ENA = 5;
+int IN1 = 8;
+int IN2 = 9;
+
+// Motor B
+int ENB = 6;
+int IN3 = 10;
+int IN4 = 11;
+
+// Water Pump Relay
+int relayPin = 7;
+
+// Motor speed: 0–255
+int speedMotor = 200;
+
+void setup() {
+  pinMode(ENA, OUTPUT);
+  pinMode(IN1, OUTPUT);
+  pinMode(IN2, OUTPUT);
+
+  pinMode(ENB, OUTPUT);
+  pinMode(IN3, OUTPUT);
+  pinMode(IN4, OUTPUT);
+
+  pinMode(relayPin, OUTPUT);
+
+  // Pump OFF initially
+  digitalWrite(relayPin, LOW);
+
+  // Bluetooth / Serial
+  Serial.begin(9600);
+
+  stopMotor();
+}
+
+void loop() {
+
+  if (Serial.available() > 0) {
+
+    data = Serial.read();
+
+    if (data == 'F') {
+      forward();
+    }
+    else if (data == 'B') {
+      backward();
+    }
+    else if (data == 'L') {
+      left();
+    }
+    else if (data == 'R') {
+      right();
+    }
+    else if (data == 'S') {
+      stopMotor();
+    }
+    else if (data == 'W') {
+      pumpON();
+    }
+    else if (data == 'w') {
+      pumpOFF();
+    }
+  }
+}
+
+// ---------------- FORWARD ----------------
+void forward() {
+
+  digitalWrite(IN1, HIGH);
+  digitalWrite(IN2, LOW);
+
+  digitalWrite(IN3, HIGH);
+  digitalWrite(IN4, LOW);
+
+  analogWrite(ENA, speedMotor);
+  analogWrite(ENB, speedMotor);
+}
+
+// ---------------- BACKWARD ----------------
+void backward() {
+
+  digitalWrite(IN1, LOW);
+  digitalWrite(IN2, HIGH);
+
+  digitalWrite(IN3, LOW);
+  digitalWrite(IN4, HIGH);
+
+  analogWrite(ENA, speedMotor);
+  analogWrite(ENB, speedMotor);
+}
+
+// ---------------- LEFT ----------------
+void left() {
+
+  digitalWrite(IN1, LOW);
+  digitalWrite(IN2, HIGH);
+
+  digitalWrite(IN3, HIGH);
+  digitalWrite(IN4, LOW);
+
+  analogWrite(ENA, speedMotor);
+  analogWrite(ENB, speedMotor);
+}
+
+// ---------------- RIGHT ----------------
+void right() {
+
+  digitalWrite(IN1, HIGH);
+  digitalWrite(IN2, LOW);
+
+  digitalWrite(IN3, LOW);
+  digitalWrite(IN4, HIGH);
+
+  analogWrite(ENA, speedMotor);
+  analogWrite(ENB, speedMotor);
+}
+
+// ---------------- STOP ----------------
+void stopMotor() {
+
+  digitalWrite(IN1, LOW);
+  digitalWrite(IN2, LOW);
+
+  digitalWrite(IN3, LOW);
+  digitalWrite(IN4, LOW);
+
+  analogWrite(ENA, 0);
+  analogWrite(ENB, 0);
+}
+
+// ---------------- PUMP ON ----------------
+void pumpON() {
+  digitalWrite(relayPin, HIGH);
+}
+
+// ---------------- PUMP OFF ----------------
+void pumpOFF() {
+  digitalWrite(relayPin, LOW);
+}
